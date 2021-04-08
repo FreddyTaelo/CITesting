@@ -1,6 +1,5 @@
 package com.example.citesting;
 
-
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
