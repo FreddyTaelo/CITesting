@@ -1,4 +1,4 @@
-sudo: false
+sudo: required
 language: android
 dist: trusty
 jdk: oraclejdk8
@@ -13,30 +13,36 @@ cache:
   - $HOME/.gradle/wrapper/
 env:
   global:
-  - ANDROID_TARGET=android-22
+  - ANDROID_TARGET=android-29
   - ANDROID_ABI=armeabi-v7a
 android:
   components:
   - tools #
   - tools
   - platform-tools
-  - build-tools-28.0.3
-  - android-28
+  - build-tools-29.0.1
+  - android-29
   - add-on
   - extra
   - $ANDROID_TARGET
   - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
-licenses:
-- 'android-sdk-preview-license-52d11cd2'
-- 'android-sdk-license-.+'
-- 'google-gdk-license-.+'
+#optional, use it if only you haven't give permission yet.
+before_install:
+  - chmod +x gradlew
+  - yes | sdkmanager "platforms;android-29"
+#   - mkdir "$ANDROID_HOME/licenses" || true
+#   - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+#   - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+#   - yes | sdkmanager --update
+#   - yes | sdkmanager --licenses
+
 script:
-- ./gradlew build jacocoTestReport assembleAndroidTest
+- ./gradlew build test
 - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI --device 'Nexus 4' --sdcard 128M
 - emulator -avd test -no-window -skin 768x1280 &
 - android-wait-for-emulator
 - adb shell setprop dalvik.vm.dexopt-flags v=n,o=v
-#- ./gradlew clean jacocoTestReport
+- ./gradlew clean
 - ./gradlew connectedCheck
 
 branches:
