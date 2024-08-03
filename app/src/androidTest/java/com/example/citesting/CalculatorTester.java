@@ -12,5 +12,4 @@ public class CalculatorTester {
         assertEquals(sum, 7);
     }
 
-
 }
